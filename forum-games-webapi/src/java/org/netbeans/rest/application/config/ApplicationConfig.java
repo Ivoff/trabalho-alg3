@@ -31,6 +31,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(controller.CategoryController.class);
         resources.add(controller.DeveloperController.class);
+        resources.add(controller.TagController.class);
     }
     
 }
