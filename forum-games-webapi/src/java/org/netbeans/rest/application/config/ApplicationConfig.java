@@ -30,10 +30,12 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(controller.CategoryController.class);
+        resources.add(controller.CommentUserGameController.class);
         resources.add(controller.DeveloperController.class);
         resources.add(controller.GameController.class);
         resources.add(controller.PublisherController.class);
         resources.add(controller.TagController.class);
+        resources.add(controller.UserController.class);
     }
     
 }

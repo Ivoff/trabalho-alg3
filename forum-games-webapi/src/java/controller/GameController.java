@@ -48,18 +48,14 @@ public class GameController {
         try{
             Game aux = new Game();
             
-            for(Developer developerElement : developerBase.show()){
-                System.out.println("element id: "+developerElement.getId());
-                System.out.println("developer_fkey: "+developer_fk);
+            for(Developer developerElement : developerBase.show()){                
                 System.out.println(developerElement.getId() == developer_fk);
                 if(developerElement.getId() == developer_fk){
                     aux.setDeveloper(developerElement);
                 }
             }
             
-            for(Publisher publisherElement : publisherBase.show()){
-                System.out.println("element id: "+publisherElement.getId());
-                System.out.println("publisher_fkey: "+publisher_fk);
+            for(Publisher publisherElement : publisherBase.show()){                
                 System.out.println(publisherElement.getId() == publisher_fk);
                 if(publisherElement.getId() == publisher_fk){
                     aux.setPublisher(publisherElement);
@@ -85,7 +81,6 @@ public class GameController {
         }catch(Exception e){
             return "{\"status\": 0}";
         }
-        String response = "{\"Status\": 1}";
-        return response;
+        return "{\"Status\": 1}";
     }
 }
