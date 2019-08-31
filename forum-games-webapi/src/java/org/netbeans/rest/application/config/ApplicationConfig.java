@@ -32,7 +32,9 @@ public class ApplicationConfig extends Application {
         resources.add(controller.CategoryController.class);
         resources.add(controller.CommentUserGameController.class);
         resources.add(controller.DeveloperController.class);
+        resources.add(controller.GameCategoryController.class);
         resources.add(controller.GameController.class);
+        resources.add(controller.GameTagCotroller.class);
         resources.add(controller.PublisherController.class);
         resources.add(controller.TagController.class);
         resources.add(controller.UserController.class);
