@@ -39,6 +39,7 @@ public class PublisherController {
     public String create(@PathParam("name")String name){
         try{
             Publisher aux = new Publisher();
+            System.out.println(name);
             aux.setName(name);
             dataBase.insert(aux);
         }catch(Exception e){

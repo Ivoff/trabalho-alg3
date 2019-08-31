@@ -10,7 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/Developer")
+@Path("/developer")
 public class DeveloperController {
     private IDeveloperDAO dataBase = new DeveloperDaoImpl();
     
