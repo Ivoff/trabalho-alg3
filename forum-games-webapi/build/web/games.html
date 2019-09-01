@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Games</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            h1{
+                border-bottom: 5px solid black;
+            }
+            table, th, td {
+                border: 1px solid black;
+            }
+            th , td{
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            dl, dt, dd{
+                font-family: Arial, Helvetica, sans-serif;                
+                padding-left: 5px;
+            }            
+            dt{
+                font-weight: bold;
+                border-left: 6px solid black;
+                background-color: lightgray;
+            }
+            dd{
+                border-left: 6px solid black;                
+                background-color: lightgray;
+            }
+            .commentContainer{
+                display: none;
+            }
+        </style>
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.js"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+            crossorigin="anonymous">                
+        </script>
+    </head>
+    <body>
+        <h1 style="font-family: Arial, Helvetica, sans-serif"><b>Games</b></h1>
+        <h2 style="font-family: Arial, Helvetica, sans-serif">Usuario</h2>
+        <p style="font-family: Arial, Helvetica, sans-serif">Id: <input type="text" name="user_name" id="user_id"></p>
+        <p style="font-family: Arial, Helvetica, sans-serif">email: <input type="email" name="user_pass" id="user_email"></p>                
+        <table>
+            <thead style="width: 100%">
+                <th>Id</th>
+                <th>Nome</th>
+                <th>Id-Desenvolvedora</th>
+                <th>Desenvolvedora</th>                
+                <th>Id-Publicadora</th>
+                <th>Publicadora</th>
+            </thead>
+            <h2 style="font-family: Arial, Helvetica, sans-serif">Tabela de games</h2>
+            <tbody id="data">
+                
+            </tbody>                        
+        </table><br/>
+        <p style="font-family: Arial, Helvetica, sans-serif">Selecione jogo (ID): <input type="text" name="select" id="select_input"><button id="select" onclick="comments()">comentarios</button></p>        
+        <dl id="comments">            
+        </dl>
+        <div class="commentContainer" id="commentContainer">
+            <p>Digite um comentario (campo de usuario deve estar preenchido):</p>
+            <textarea rows="4" cols="50" id="commentArea">
+            </textarea><br/>
+            <button onclick="comment()">comentar</button><br/>
+            <div>
+                <p>Comment id: <input type="text" id="commentId"><button>deletar</button></p>                                
+            </div>
+        </div>
+    </body>
+    <script>
+        $(document).ready(()=>{
+            const url = "http://localhost:8080/forum-games-webapi/api/game/";
+            async function getGameData(){
+                let response = await fetch(url);
+                let data = await response.json();
+                return data;
+            }
+            getGameData().then(data => {
+                data.forEach(element =>{
+                    let aux = $("#data");
+                    let content = `<tr><td>${element.id}</td><td>${element.name}</td><td>${element.developer.id}</td><td>${element.developer.name}</td><td>${element.publisher.id}</td><td>${element.publisher.name}</td></tr>`;
+                    console.log(content);
+                    aux.append(content);
+                });
+            })            
+        });
+        function comments(){
+            let selected = document.getElementById("select_input").value;
+            console.log(selected);
+            const url = "http://localhost:8080/forum-games-webapi/api/comments/";
+            async function getCommentData(){
+                let response = await fetch(url);
+                let data = await response.json();                
+                return data;
+            }
+            getCommentData().then(data => {
+                data.forEach(element => {
+                    if(element.game.id == selected){
+                        let poster = document.createElement("dt");
+                        let posterName = document.createTextNode(`${element.poster.name} - id:${element.id}`);
+                        poster.appendChild(posterName);
+                        let content = document.createElement("dd");                        
+                        let contentText = document.createTextNode(element.content);
+                        content.appendChild(contentText);
+                        let commentList = document.getElementById("comments");
+                        commentList.appendChild(poster);
+                        commentList.appendChild(content);
+                    }
+                })
+            });
+            document.getElementById("commentContainer").style.display = "block";
+        }
+        
+        function comment(){
+            let currentContent = document.getElementById("commentArea").value;
+            let currentGameId = document.getElementById("select_input").value;
+            const url = `http://localhost:8080/forum-games-webapi/api/game/select/${currentGameId}`;
+            async function getGameData(){
+                let response = await fetch(url);
+                let data = await response.json();                
+                return data;
+            }
+            async function getUserData(){
+                let response = await fetch(`http://localhost:8080/forum-games-webapi/api/user/select/${document.getElementById("user_id").value}`);
+                let data = await response.json();                
+                if(document.getElementById("user_email").value == data.email){
+                    return data;
+                }else{
+                    return null;
+                }
+            }
+            async function createComment(posterId, gameId, content){
+                let response = await fetch(`http://localhost:8080/forum-games-webapi/api/comments/create/${posterId}/${gameId}/${content}`);
+                let data = await response.json();
+                console.log(data);
+            }
+            getGameData().then(gameData => {
+                console.log(gameData);
+                getUserData().then(userData => {
+                    console.log(userData);
+                    createComment(userData.id, gameData.id, currentContent);
+                });
+            });            
+        }
+        
+        function commentModify(){
+            let commentId = document.getElemenById("commentId").value;
+        }
+        /*$(documet).ready(() => {
+            function selectGame(){
+                let userName = getElementById("user_name").value;
+                let userRawPass = getElementById("user_pass").value;
+                let select = getElementById("select").value;
+                
+                const url = `http://localhost:8080/forum-games-webapi/api/game/select/${select}`;
+                
+                async function getSelectGame(){
+                    let response = await fetch(url);
+                    let data = await response.json();
+                    return data;
+                }
+                getSelectGame(){
+                    
+                }
+            }
+        });*/
+            
+    </script>
+</html>
