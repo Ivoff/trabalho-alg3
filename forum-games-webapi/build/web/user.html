@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Users</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.js"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+            crossorigin="anonymous">                
+        </script>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <th>Id</th>
+                <th>Nome</th>
+                <th>Email</th>
+            </thead>
+            <tbody id="data">                
+            </tbody>
+        </table>
+        <h2>Criar</h2>
+        <p>Nome: <input type="text" id="name"></p>
+        <p>Email: <input type="email" id="email"></p>
+        <p>Senha: <input type="password" id="pass">// essa senha eh meio inutil, eu queria fazer um sistema de login mas nao rolou</p>
+        <button onclick="create()">criar</button>
+        <h2>Deletar</h2>
+        <p>Id: <input type="text" id="delete"><button onclick="del()">deletar</button></p>
+    </body>
+    <script>
+        $(document).ready(()=>{
+            const url = "http://localhost:8080/forum-games-webapi/api/user/";
+            async function getUserData(){
+                let response = await fetch(url);
+                let data = await response.json();
+                return data;
+            }
+            getUserData().then(data => {
+                data.forEach(element =>{
+                    let aux = $("#data");
+                    let content = `<tr><td>${element.id}</td><td>${element.name}</td><td>${element.email}</td></tr>`;                    
+                    aux.append(content);
+                });
+            })            
+        });
+        function create(){
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let pass = document.getElementById("pass").value
+            $(document).ready(()=>{
+                $.get(`http://localhost:8080/forum-games-webapi/api/user/create/${name}/${email}/${pass}`, (data) => {
+                    console.log(data);
+                });
+            });
+        }
+        function del(){
+            let id = document.getElementById("delete").value;
+            $(document).ready(()=>{
+                $.get(`http://localhost:8080/forum-games-webapi/api/user/delete/${id}`, (data) => {
+                    console.log(data);
+                });
+            });
+        }
+    </script>
+</html>

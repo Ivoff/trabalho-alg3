@@ -70,8 +70,15 @@ and open the template in the editor.
             </textarea><br/>
             <button onclick="comment()">comentar</button><br/>
             <div>
-                <p>Comment id: <input type="text" id="commentId"><button>deletar</button></p>                                
+                <p>Comment id: <input type="text" id="commentId"><button onclick="commentModify()">deletar</button></p>                                
             </div>
+        </div>
+        <div id="game">
+            <h2 style="font-family: Arial, Helvetica, sans-serif">Adicionar Game</h2>
+            Nome: <input type="text" id="gameName"><br/>
+            Publicadora (ID): <input type="text" id="gamePublisher"><br/>
+            Desenvolvedora (ID): <input type="text" id="gameDeveloper"><br/>
+            <button onclick="addGame()">Adicionar</button>
         </div>
     </body>
     <script>
@@ -124,12 +131,15 @@ and open the template in the editor.
             const url = `http://localhost:8080/forum-games-webapi/api/game/select/${currentGameId}`;
             async function getGameData(){
                 let response = await fetch(url);
-                let data = await response.json();                
+                let data = await response.json();
                 return data;
             }
             async function getUserData(){
                 let response = await fetch(`http://localhost:8080/forum-games-webapi/api/user/select/${document.getElementById("user_id").value}`);
                 let data = await response.json();                
+                console.log(document.getElementById("user_email").value == data.email);
+                console.log(document.getElementById("user_email").value);
+                console.log(data.email);
                 if(document.getElementById("user_email").value == data.email){
                     return data;
                 }else{
@@ -138,7 +148,7 @@ and open the template in the editor.
             }
             async function createComment(posterId, gameId, content){
                 let response = await fetch(`http://localhost:8080/forum-games-webapi/api/comments/create/${posterId}/${gameId}/${content}`);
-                let data = await response.json();
+                let data = await response;
                 console.log(data);
             }
             getGameData().then(gameData => {
@@ -151,7 +161,72 @@ and open the template in the editor.
         }
         
         function commentModify(){
-            let commentId = document.getElemenById("commentId").value;
+            /*console.log(document.getElementById("commentId").value);
+            async function deleteComment(id){                
+                let response = fetch(`http://localhost:8080/forum-games-webapi/api/comments/delete/${id}`);
+                let data = await response;
+                console.log(data);
+            }
+            async function selectComment(){
+                let response = fetch(`http://localhost:8080/forum-games-webapi/api/comments/select/${document.getElementById("commentId").value}`);
+                console.log(response);
+                let data = await response;
+                return data;
+            }
+            async function getUserData(){
+                let response = await fetch(`http://localhost:8080/forum-games-webapi/api/user/select/${document.getElementById("user_id").value}`);
+                let data = await response.json();
+                if(document.getElementById("user_email").value == data.email){
+                    return data;
+                }else{
+                    return null;
+                }
+            }
+            selectComment().then(selectedComment => {                
+                getUserData().then(userData => {
+                    if(userData.id == selectedComment.poster.id){
+                        deleteComment(commentId);
+                    }else{
+                        console.log("vc tentou deletar o comentario de outra pessoa");
+                    }
+                });
+            });*/
+            let userId = document.getElementById("user_id").value;
+            let commentId = document.getElementById("commentId").value;
+            
+            $(document).ready(() => {
+                $.get(`http://localhost:8080/forum-games-webapi/api/comments/select/${document.getElementById("commentId").value}`, data => {
+                    if(data.poster.id == userId){
+                        $get(`http://localhost:8080/forum-games-webapi/api/comments/delete/${commentId}`, commentData => {
+                            console.log(commentData);
+                        });
+                    }
+                });
+            });
+            
+            /*getUserData().then(userData => {
+                selectComment().then(selectedCommentData => {
+                    if(userData.id == selectedCommentData.poster.id){
+                        deleteComment(commentId);
+                    }else{
+                        console.log("vc tentou deletar o comentario de outra pessoa");
+                    }
+                });
+            });*/
+        }
+        
+        function addGame(){
+            let gameName = document.getElementById("gameName").value;
+            let gamePublisher = document.getElementById("gamePublisher").value;
+            let gameDeveloper = document.getElementById("gameDeveloper").value;
+            
+            async function createGame(){
+                let response = fetch(`http://localhost:8080/forum-games-webapi/api/game/create/${gameName}/${gameDeveloper}/${gamePublisher}`);
+                let data = await response;
+                console.log(data);
+            }
+            
+            createGame();
         }
         /*$(documet).ready(() => {
             function selectGame(){
